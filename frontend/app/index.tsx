@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
@@ -29,7 +29,7 @@ export default function Landing() {
   }, [isAuthenticated, user]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
         <Image 
           source={{ uri: LOGO_URL }} 
@@ -83,8 +83,37 @@ export default function Landing() {
         />
       </View>
 
+      {/* Partner CTA */}
+      <TouchableOpacity 
+        style={styles.partnerCta}
+        onPress={() => router.push('/partner')}
+      >
+        <Ionicons name="storefront" size={20} color="#00A86B" />
+        <Text style={styles.partnerText}>Are you a merchant? Partner with us</Text>
+        <Ionicons name="arrow-forward" size={18} color="#00A86B" />
+      </TouchableOpacity>
+
+      {/* Footer Links */}
+      <View style={styles.footerLinks}>
+        <TouchableOpacity onPress={() => router.push('/help')}>
+          <Text style={styles.footerLink}>Help</Text>
+        </TouchableOpacity>
+        <Text style={styles.footerDivider}>•</Text>
+        <TouchableOpacity onPress={() => router.push('/contact')}>
+          <Text style={styles.footerLink}>Contact</Text>
+        </TouchableOpacity>
+        <Text style={styles.footerDivider}>•</Text>
+        <TouchableOpacity onPress={() => router.push('/terms')}>
+          <Text style={styles.footerLink}>Terms</Text>
+        </TouchableOpacity>
+        <Text style={styles.footerDivider}>•</Text>
+        <TouchableOpacity onPress={() => router.push('/privacy')}>
+          <Text style={styles.footerLink}>Privacy</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.footer}>Powered by The TechXpert</Text>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -92,6 +121,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0f0f1a',
+  },
+  scrollContent: {
     paddingHorizontal: 24,
     paddingTop: 10,
     paddingBottom: 40,
@@ -111,8 +142,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   features: {
-    flex: 1,
-    justifyContent: 'flex-start',
     gap: 16,
   },
   featureItem: {
@@ -154,10 +183,44 @@ const styles = StyleSheet.create({
   secondaryBtn: {
     width: '100%',
   },
+  partnerCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#00A86B15',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#00A86B30',
+  },
+  partnerText: {
+    color: '#00A86B',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  footerLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 24,
+  },
+  footerLink: {
+    color: '#888',
+    fontSize: 13,
+  },
+  footerDivider: {
+    color: '#555',
+    fontSize: 13,
+  },
   footer: {
     color: '#555',
     fontSize: 12,
     textAlign: 'center',
-    marginTop: 24,
+    marginTop: 16,
   },
 });
