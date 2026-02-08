@@ -31,10 +31,11 @@ export default function Landing() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <Ionicons name="gift" size={48} color="#00A86B" />
-        </View>
-        <Text style={styles.title}>PayPerks GY</Text>
+        <Image 
+          source={{ uri: LOGO_URL }} 
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.subtitle}>Guyana's Digital Payment Rewards</Text>
       </View>
 
