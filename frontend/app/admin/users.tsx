@@ -81,6 +81,30 @@ export default function AdminUsers() {
     }
   };
 
+  const handleDelete = async (userId: string) => {
+    Alert.alert(
+      'Delete Account', 
+      'Are you sure you want to permanently delete this user account? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await api.delete(`/admin/users/${userId}`);
+              loadUsers();
+              setModalVisible(false);
+              Alert.alert('Success', 'User account deleted');
+            } catch (error: any) {
+              Alert.alert('Error', error.response?.data?.detail || 'Failed to delete user');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const renderItem = ({ item }: any) => (
     <TouchableOpacity
       style={styles.card}
