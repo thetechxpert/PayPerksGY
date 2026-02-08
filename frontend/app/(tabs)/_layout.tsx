@@ -1,19 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/authStore';
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
 
 export default function TabLayout() {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'user') {
-      router.replace('/');
+    // Only redirect once and only after loading is complete
+    if (!isLoading && !hasRedirected) {
+      if (!isAuthenticated || user?.role !== 'user') {
+        setHasRedirected(true);
+        router.replace('/');
+      }
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, isLoading, hasRedirected]);
+
+  // Don't render tabs if not authenticated
+  if (isLoading || !isAuthenticated || user?.role !== 'user') {
+    return null;
+  }
 
   return (
     <Tabs
