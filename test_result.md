@@ -116,6 +116,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Tested user, merchant, and admin registration/login APIs via curl. All working."
+      - working: true
+        agent: "testing"
+        comment: "Comprehensive testing completed. All auth endpoints working: registration (prevents duplicates correctly), login for all 3 roles, profile retrieval, profile updates. User profile update uses query parameters correctly. JWT tokens working properly."
 
   - task: "Merchant CRUD & Approval"
     implemented: true
@@ -128,6 +131,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Admin can approve/reject merchants. Merchants can update profile. Tested via curl."
+      - working: true
+        agent: "testing"
+        comment: "All merchant endpoints tested successfully: profile updates, admin approval workflow, merchant analytics (offers/redemptions stats). Approved merchants can create offers, unapproved cannot."
 
   - task: "Offer Management"
     implemented: true
@@ -140,6 +146,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Merchants can create/edit offers. Users can browse/search offers. Tested via curl."
+      - working: true
+        agent: "testing"
+        comment: "Complete offer system working: creation by approved merchants, browsing with filters (category, location, search), individual offer details, QR data generation. Admin can view/toggle all offers."
 
   - task: "Redemption System"
     implemented: true
@@ -152,6 +161,9 @@ backend:
       - working: true
         agent: "main"
         comment: "QR redemptions auto-approved with points. Receipt redemptions pending. Points ledger working."
+      - working: true
+        agent: "testing"
+        comment: "Full redemption flow tested: QR redemptions auto-approved with instant points, receipt redemptions pending approval, duplicate prevention (same offer/day), points ledger tracking, merchant/admin approval workflows."
 
   - task: "Admin Dashboard & Metrics"
     implemented: true
@@ -164,6 +176,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Platform metrics endpoint working. User/merchant management endpoints working."
+      - working: true
+        agent: "testing"
+        comment: "All admin features working: platform metrics, user/merchant management, points adjustment, redemption oversight, offer management. Admin can approve merchants, suspend users, adjust points, view all data."
 
 frontend:
   - task: "Landing & Auth Screens"
