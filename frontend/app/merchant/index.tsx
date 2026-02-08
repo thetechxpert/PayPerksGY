@@ -323,6 +323,20 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
   },
+  completeProfileBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#ffffff20',
+  },
+  completeProfileText: {
+    color: '#00A86B',
+    fontSize: 14,
+    fontWeight: '500',
+  },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
