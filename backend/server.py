@@ -666,12 +666,14 @@ async def create_redemption(redemption: RedemptionCreate, current_user: dict = D
     
     # If QR redemption, instantly approve and award points
     if redemption.method == "qr":
-        points = 10  # Default engagement points
+        # Award points based on reward_type
         if offer["reward_type"] == "points":
             try:
                 points = int(offer["reward_value"])
             except:
-                points = 10
+                points = 1  # Fallback
+        else:
+            points = 1  # Default engagement points for non-points rewards
         
         redemption_doc["points_awarded"] = points
         await db.users.update_one({"id": current_user["id"]}, {"$inc": {"points_balance": points}})
