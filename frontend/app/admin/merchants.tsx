@@ -281,6 +281,14 @@ export default function AdminMerchants() {
                     {selectedMerchant.status === 'suspended' ? 'Reactivate Account' : 'Suspend Account'}
                   </Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.deleteBtn}
+                  onPress={() => handleDelete(selectedMerchant.id)}
+                >
+                  <Ionicons name="trash" size={18} color="#dc3545" />
+                  <Text style={styles.deleteBtnText}>Delete Account</Text>
+                </TouchableOpacity>
               </>
             )}
           </View>
