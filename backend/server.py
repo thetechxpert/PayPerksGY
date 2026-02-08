@@ -834,14 +834,15 @@ async def admin_approve_redemption(redemption_id: str, approval: RedemptionAppro
         update_data["rejection_reason"] = approval.rejection_reason
     else:
         update_data["redeemed_at"] = datetime.utcnow()
-        # Award points
+        # Award points based on reward_type
         offer = await db.offers.find_one({"id": redemption["offer_id"]})
-        points = 10  # Default engagement points
         if offer and offer["reward_type"] == "points":
             try:
                 points = int(offer["reward_value"])
             except:
-                points = 10
+                points = 1  # Fallback
+        else:
+            points = 1  # Default engagement points for non-points rewards
         
         update_data["points_awarded"] = points
         await db.users.update_one({"id": redemption["user_id"]}, {"$inc": {"points_balance": points}})
