@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Optional
 
 # Configuration
-BASE_URL = "https://gy-pocket-perks.preview.emergentagent.com/api"
+BASE_URL = "https://loyaltyboost-5.preview.emergentagent.com/api"
 TIMEOUT = 30
 
 # Test accounts (as mentioned in review request)
