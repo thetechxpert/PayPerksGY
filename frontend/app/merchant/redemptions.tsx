@@ -450,4 +450,72 @@ const styles = StyleSheet.create({
   rejectBtn: {
     flex: 1,
   },
+  rejectModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  rejectModalContent: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    maxWidth: 400,
+  },
+  rejectModalTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  rejectModalSubtitle: {
+    color: '#888',
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  rejectInput: {
+    backgroundColor: '#0f0f1a',
+    borderRadius: 12,
+    padding: 14,
+    color: '#fff',
+    fontSize: 15,
+    minHeight: 100,
+    textAlignVertical: 'top',
+    borderWidth: 1,
+    borderColor: '#2a2a3e',
+  },
+  rejectModalActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 16,
+  },
+  rejectCancelBtn: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: '#2a2a3e',
+    alignItems: 'center',
+  },
+  rejectCancelText: {
+    color: '#888',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  rejectConfirmBtn: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: '#dc3545',
+    alignItems: 'center',
+  },
+  rejectConfirmBtnDisabled: {
+    backgroundColor: '#dc354550',
+  },
+  rejectConfirmText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
 });
