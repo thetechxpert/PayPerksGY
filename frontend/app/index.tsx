@@ -83,7 +83,7 @@ export default function Landing() {
         />
       </View>
 
-      <Text style={styles.footer}>Powered by Digital Guyana Initiative</Text>
+      <Text style={styles.footer}>Powered by The TechXpert</Text>
     </View>
   );
 }
