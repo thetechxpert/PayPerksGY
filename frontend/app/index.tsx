@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
 import { useAuthStore } from '../store/authStore';
+
+const LOGO_URL = 'https://customer-assets.emergentagent.com/job_111ef9f1-fd64-4651-82da-1f2ef79bf57d/artifacts/tnf7d0hh_PayPerksGY_logo.png';
 
 export default function Landing() {
   const router = useRouter();
