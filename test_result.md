@@ -210,15 +210,18 @@ frontend:
 
   - task: "Offer Detail & Redemption Flow"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/app/offer-detail.tsx, redeem.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented offer details page with QR scanner and receipt upload options."
+      - working: true
+        agent: "main"
+        comment: "Phase 6 Update: Added receipt upload flow with two options (Scan QR / Upload Receipt). Users can take photo or pick from gallery. Receipt creates pending redemption for admin review."
 
   - task: "Merchant Dashboard & Offer Management"
     implemented: true
