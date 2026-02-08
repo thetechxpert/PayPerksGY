@@ -39,11 +39,27 @@ export default function OfferDetailScreen() {
       case 'fixed':
         return `$${offer.reward_value} OFF`;
       case 'free_item':
-        return 'FREE ITEM';
+        return offer.reward_value || 'FREE ITEM';
       case 'points':
         return `${offer.reward_value} POINTS`;
       default:
         return offer.reward_value;
+    }
+  };
+
+  const getRewardTypeLabel = () => {
+    if (!offer) return '';
+    switch (offer.reward_type) {
+      case 'percent':
+        return 'Percentage Discount';
+      case 'fixed':
+        return 'Fixed Amount Off';
+      case 'free_item':
+        return 'Free Item';
+      case 'points':
+        return 'Bonus Points';
+      default:
+        return offer.reward_type;
     }
   };
 
@@ -61,6 +77,7 @@ export default function OfferDetailScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
+          <Ionicons name="alert-circle-outline" size={64} color="#888" />
           <Text style={styles.errorText}>Offer not found</Text>
         </View>
       </SafeAreaView>
@@ -68,6 +85,7 @@ export default function OfferDetailScreen() {
   }
 
   const isExpired = new Date(offer.end_date) < new Date();
+  const isNotStarted = new Date(offer.start_date) > new Date();
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -105,74 +123,129 @@ export default function OfferDetailScreen() {
             <Ionicons name="gift" size={24} color="#fff" />
             <Text style={styles.rewardText}>{getRewardDisplay()}</Text>
           </View>
+          <Text style={styles.rewardTypeLabel}>{getRewardTypeLabel()}</Text>
         </View>
 
-        {/* Offer Details */}
+        {/* Offer Title & Description */}
         <View style={styles.detailsSection}>
           <Text style={styles.offerTitle}>{offer.title}</Text>
           <Text style={styles.offerDescription}>{offer.description}</Text>
         </View>
 
-        {/* Validity */}
-        <View style={styles.validitySection}>
-          <View style={styles.validityRow}>
-            <Ionicons name="calendar" size={18} color="#00A86B" />
-            <View style={styles.validityInfo}>
-              <Text style={styles.validityLabel}>Valid Period</Text>
-              <Text style={styles.validityValue}>
+        {/* Offer Details Card */}
+        <View style={styles.infoCard}>
+          <Text style={styles.infoCardTitle}>Offer Details</Text>
+          
+          <View style={styles.infoRow}>
+            <View style={styles.infoIcon}>
+              <Ionicons name="pricetag" size={18} color="#00A86B" />
+            </View>
+            <View style={styles.infoContent}>
+              <Text style={styles.infoLabel}>Reward Type</Text>
+              <Text style={styles.infoValue}>{getRewardTypeLabel()}</Text>
+            </View>
+          </View>
+
+          <View style={styles.infoRow}>
+            <View style={styles.infoIcon}>
+              <Ionicons name="diamond" size={18} color="#00A86B" />
+            </View>
+            <View style={styles.infoContent}>
+              <Text style={styles.infoLabel}>Reward Value</Text>
+              <Text style={styles.infoValue}>{getRewardDisplay()}</Text>
+            </View>
+          </View>
+
+          <View style={styles.infoRow}>
+            <View style={styles.infoIcon}>
+              <Ionicons name="calendar" size={18} color="#00A86B" />
+            </View>
+            <View style={styles.infoContent}>
+              <Text style={styles.infoLabel}>Valid Period</Text>
+              <Text style={styles.infoValue}>
                 {format(new Date(offer.start_date), 'MMM d, yyyy')} - {format(new Date(offer.end_date), 'MMM d, yyyy')}
               </Text>
             </View>
           </View>
-          {isExpired && (
-            <View style={styles.expiredBadge}>
-              <Ionicons name="alert-circle" size={16} color="#dc3545" />
-              <Text style={styles.expiredText}>This offer has expired</Text>
+
+          {offer.category && (
+            <View style={styles.infoRow}>
+              <View style={styles.infoIcon}>
+                <Ionicons name="grid" size={18} color="#00A86B" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Category</Text>
+                <Text style={styles.infoValue}>{offer.category}</Text>
+              </View>
+            </View>
+          )}
+
+          {offer.location && (
+            <View style={styles.infoRow}>
+              <View style={styles.infoIcon}>
+                <Ionicons name="location" size={18} color="#00A86B" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Location</Text>
+                <Text style={styles.infoValue}>{offer.location}</Text>
+              </View>
             </View>
           )}
         </View>
 
-        {/* Redemption Rules */}
-        {offer.redemption_rules && (
-          <View style={styles.rulesSection}>
-            <Text style={styles.rulesTitle}>Redemption Rules</Text>
-            <Text style={styles.rulesText}>{offer.redemption_rules}</Text>
+        {/* Status Warnings */}
+        {isExpired && (
+          <View style={styles.warningBox}>
+            <Ionicons name="alert-circle" size={20} color="#dc3545" />
+            <Text style={styles.warningText}>This offer has expired</Text>
           </View>
         )}
 
-        {/* How to Redeem */}
-        <View style={styles.howToSection}>
-          <Text style={styles.howToTitle}>How to Redeem</Text>
-          <View style={styles.howToStep}>
-            <View style={styles.stepNumber}><Text style={styles.stepNumberText}>1</Text></View>
-            <View style={styles.stepContent}>
-              <Text style={styles.stepTitle}>Make a digital payment</Text>
-              <Text style={styles.stepDesc}>Pay with your debit card at the merchant</Text>
-            </View>
+        {isNotStarted && (
+          <View style={[styles.warningBox, { backgroundColor: '#ffc10720', borderColor: '#ffc10740' }]}>
+            <Ionicons name="time" size={20} color="#ffc107" />
+            <Text style={[styles.warningText, { color: '#ffc107' }]}>
+              This offer starts on {format(new Date(offer.start_date), 'MMM d, yyyy')}
+            </Text>
           </View>
-          <View style={styles.howToStep}>
-            <View style={styles.stepNumber}><Text style={styles.stepNumberText}>2</Text></View>
-            <View style={styles.stepContent}>
-              <Text style={styles.stepTitle}>Scan QR or upload receipt</Text>
-              <Text style={styles.stepDesc}>Choose your preferred verification method</Text>
-            </View>
+        )}
+
+        {!offer.active && (
+          <View style={styles.warningBox}>
+            <Ionicons name="pause-circle" size={20} color="#dc3545" />
+            <Text style={styles.warningText}>This offer is currently inactive</Text>
           </View>
-          <View style={styles.howToStep}>
-            <View style={styles.stepNumber}><Text style={styles.stepNumberText}>3</Text></View>
-            <View style={styles.stepContent}>
-              <Text style={styles.stepTitle}>Earn your reward</Text>
-              <Text style={styles.stepDesc}>Get points and enjoy the offer benefits</Text>
+        )}
+
+        {/* Redemption Rules */}
+        {offer.redemption_rules && (
+          <View style={styles.rulesSection}>
+            <View style={styles.rulesTitleRow}>
+              <Ionicons name="document-text" size={18} color="#00A86B" />
+              <Text style={styles.rulesTitle}>Redemption Rules</Text>
             </View>
+            <Text style={styles.rulesText}>{offer.redemption_rules}</Text>
           </View>
-        </View>
+        )}
       </ScrollView>
 
-      {/* Redeem Button */}
-      {user?.role === 'user' && !isExpired && (
+      {/* Redeem Button - Only for Users */}
+      {user?.role === 'user' && (
         <View style={styles.bottomAction}>
           <Button
             title="Redeem This Offer"
-            onPress={() => router.push({ pathname: '/redeem', params: { id: offer.id } })}
+            onPress={() => {
+              if (isExpired) {
+                Alert.alert('Expired', 'This offer has expired and cannot be redeemed.');
+              } else if (isNotStarted) {
+                Alert.alert('Not Yet Available', `This offer starts on ${format(new Date(offer.start_date), 'MMM d, yyyy')}.`);
+              } else if (!offer.active) {
+                Alert.alert('Inactive', 'This offer is currently inactive.');
+              } else {
+                router.push({ pathname: '/redeem', params: { id: offer.id } });
+              }
+            }}
+            disabled={isExpired || isNotStarted || !offer.active}
           />
         </View>
       )}
@@ -193,10 +266,11 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#888',
     fontSize: 16,
+    marginTop: 12,
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
   merchantHeader: {
     flexDirection: 'row',
@@ -270,6 +344,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
   },
+  rewardTypeLabel: {
+    color: '#888',
+    fontSize: 13,
+    marginTop: 8,
+  },
   detailsSection: {
     marginBottom: 24,
   },
@@ -284,101 +363,84 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 24,
   },
-  validitySection: {
+  infoCard: {
     backgroundColor: '#1a1a2e',
     borderRadius: 16,
     padding: 16,
-    marginBottom: 20,
+    marginBottom: 16,
   },
-  validityRow: {
+  infoCardTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#2a2a3e',
   },
-  validityInfo: {
-    marginLeft: 12,
+  infoIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#00A86B15',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
-  validityLabel: {
+  infoContent: {
+    flex: 1,
+  },
+  infoLabel: {
     color: '#888',
     fontSize: 12,
     marginBottom: 2,
   },
-  validityValue: {
+  infoValue: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '500',
   },
-  expiredBadge: {
+  warningBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
     backgroundColor: '#dc354520',
-    padding: 10,
-    borderRadius: 8,
-    marginTop: 12,
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#dc354540',
   },
-  expiredText: {
+  warningText: {
+    flex: 1,
     color: '#dc3545',
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 14,
   },
   rulesSection: {
     backgroundColor: '#1a1a2e',
     borderRadius: 16,
     padding: 16,
-    marginBottom: 20,
+    marginBottom: 16,
+  },
+  rulesTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
   },
   rulesTitle: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 8,
   },
   rulesText: {
     color: '#aaa',
     fontSize: 14,
     lineHeight: 22,
-  },
-  howToSection: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 16,
-    padding: 16,
-  },
-  howToTitle: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 16,
-  },
-  howToStep: {
-    flexDirection: 'row',
-    marginBottom: 16,
-  },
-  stepNumber: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#00A86B',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  stepNumberText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  stepContent: {
-    flex: 1,
-  },
-  stepTitle: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 2,
-  },
-  stepDesc: {
-    color: '#888',
-    fontSize: 13,
   },
   bottomAction: {
     position: 'absolute',
