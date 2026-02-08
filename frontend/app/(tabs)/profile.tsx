@@ -245,6 +245,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    marginBottom: 12,
   },
   editBtn: {
     color: '#00A86B',
