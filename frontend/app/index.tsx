@@ -1,12 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
 import { useAuthStore } from '../store/authStore';
-
-const { width } = Dimensions.get('window');
 
 export default function Landing() {
   const router = useRouter();
