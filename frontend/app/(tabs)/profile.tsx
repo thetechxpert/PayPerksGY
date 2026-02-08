@@ -278,6 +278,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#2a2a3e',
+  },
+  menuItemText: {
+    flex: 1,
+    marginLeft: 12,
+    color: '#fff',
+    fontSize: 16,
   },
   menuItemTextDanger: {
     flex: 1,
