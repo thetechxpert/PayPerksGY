@@ -98,12 +98,12 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 16,
   },
   logo: {
     width: 360,
     height: 200,
-    marginBottom: 8,
+    marginBottom: 0,
   },
   subtitle: {
     fontSize: 16,
@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
   },
   features: {
     flex: 1,
-    justifyContent: 'center',
-    gap: 20,
+    justifyContent: 'flex-start',
+    gap: 16,
   },
   featureItem: {
     flexDirection: 'row',
