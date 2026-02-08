@@ -98,14 +98,44 @@ export default function MerchantDashboard() {
           </TouchableOpacity>
         </View>
 
+        {/* Status Banner */}
         {!isApproved && (
-          <View style={styles.pendingBox}>
-            <Ionicons name="information-circle" size={24} color="#ffc107" />
+          <View style={[
+            styles.pendingBox,
+            isRejected && { backgroundColor: '#dc354520', borderColor: '#dc354540' },
+            isSuspended && { backgroundColor: '#dc354520', borderColor: '#dc354540' }
+          ]}>
+            <Ionicons 
+              name={isRejected || isSuspended ? 'alert-circle' : 'information-circle'} 
+              size={24} 
+              color={isRejected || isSuspended ? '#dc3545' : '#ffc107'} 
+            />
             <View style={styles.pendingContent}>
-              <Text style={styles.pendingTitle}>Account Pending Approval</Text>
-              <Text style={styles.pendingText}>
-                Your merchant account is being reviewed by our admin team. You'll be able to create offers once approved.
+              <Text style={[
+                styles.pendingTitle,
+                (isRejected || isSuspended) && { color: '#dc3545' }
+              ]}>
+                {isSuspended ? 'Account Suspended' : isRejected ? 'Application Rejected' : 'Account Pending Approval'}
               </Text>
+              <Text style={styles.pendingText}>
+                {isSuspended 
+                  ? 'Your account has been suspended. Contact support for assistance.'
+                  : isRejected 
+                    ? merchantUser?.rejected_reason || 'Your application was not approved. Please contact support.'
+                    : 'Your merchant account is being reviewed by our admin team. You\'ll be able to create offers once approved.'
+                }
+              </Text>
+              {!isSuspended && (
+                <TouchableOpacity 
+                  style={styles.completeProfileBtn}
+                  onPress={() => router.push('/merchant/profile')}
+                >
+                  <Text style={styles.completeProfileText}>
+                    {isRejected ? 'Update Profile & Resubmit' : 'Complete Your Profile'}
+                  </Text>
+                  <Ionicons name="arrow-forward" size={16} color="#00A86B" />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         )}
