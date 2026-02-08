@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Image, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import Button from '../components/Button';
 import api from '../utils/api';
 import { useAuthStore } from '../store/authStore';
+
+type RedeemMethod = 'select' | 'qr' | 'receipt';
 
 export default function RedeemScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -18,6 +21,8 @@ export default function RedeemScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
+  const [redeemMethod, setRedeemMethod] = useState<RedeemMethod>('select');
+  const [receiptImage, setReceiptImage] = useState<string | null>(null);
 
   useEffect(() => {
     loadOffer();
@@ -66,7 +71,7 @@ export default function RedeemScreen() {
       }
       
       // QR is valid, submit redemption
-      await submitRedemption();
+      await submitRedemption('qr');
       
     } catch (error) {
       // Not valid JSON or other error
@@ -75,13 +80,17 @@ export default function RedeemScreen() {
     }
   };
 
-  const submitRedemption = async () => {
+  const submitRedemption = async (method: 'qr' | 'receipt', proofBase64?: string) => {
     setSubmitting(true);
     try {
-      const payload = {
+      const payload: any = {
         offer_id: id,
-        method: 'qr',
+        method,
       };
+
+      if (method === 'receipt' && proofBase64) {
+        payload.proof_base64 = proofBase64;
+      }
 
       const res = await api.post('/redemptions', payload);
       await refreshUser();
@@ -95,7 +104,7 @@ export default function RedeemScreen() {
       } else {
         Alert.alert(
           'Redemption Submitted',
-          'Your redemption is pending review.',
+          'Your redemption has been submitted and is pending review. You will be notified once it\'s approved.',
           [{ text: 'OK', onPress: () => router.replace('/(tabs)/history') }]
         );
       }
@@ -113,6 +122,67 @@ export default function RedeemScreen() {
     setScanError(null);
   };
 
+  const pickImage = async () => {
+    try {
+      // Request permission
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'Please allow access to your photo library to upload receipts.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [3, 4],
+        quality: 0.5,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets[0].base64) {
+        const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+        setReceiptImage(base64Image);
+      }
+    } catch (error) {
+      console.log('Error picking image:', error);
+      Alert.alert('Error', 'Failed to pick image');
+    }
+  };
+
+  const takePhoto = async () => {
+    try {
+      // Request camera permission
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'Please allow camera access to take photos of receipts.');
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [3, 4],
+        quality: 0.5,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets[0].base64) {
+        const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+        setReceiptImage(base64Image);
+      }
+    } catch (error) {
+      console.log('Error taking photo:', error);
+      Alert.alert('Error', 'Failed to take photo');
+    }
+  };
+
+  const handleReceiptSubmit = () => {
+    if (!receiptImage) {
+      Alert.alert('No Receipt', 'Please upload or take a photo of your receipt first.');
+      return;
+    }
+    submitRedemption('receipt', receiptImage);
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -122,6 +192,206 @@ export default function RedeemScreen() {
       </SafeAreaView>
     );
   }
+
+  const renderMethodSelection = () => (
+    <View style={styles.methodSection}>
+      <Text style={styles.sectionTitle}>Choose Redemption Method</Text>
+      
+      <TouchableOpacity 
+        style={styles.methodCard}
+        onPress={() => setRedeemMethod('qr')}
+      >
+        <View style={styles.methodIcon}>
+          <Ionicons name="qr-code" size={32} color="#00A86B" />
+        </View>
+        <View style={styles.methodContent}>
+          <Text style={styles.methodTitle}>Scan QR Code</Text>
+          <Text style={styles.methodDesc}>
+            Scan the merchant's QR code for instant redemption
+          </Text>
+        </View>
+        <Ionicons name="chevron-forward" size={24} color="#888" />
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.methodCard}
+        onPress={() => setRedeemMethod('receipt')}
+      >
+        <View style={styles.methodIcon}>
+          <Ionicons name="receipt" size={32} color="#00A86B" />
+        </View>
+        <View style={styles.methodContent}>
+          <Text style={styles.methodTitle}>Upload Receipt</Text>
+          <Text style={styles.methodDesc}>
+            Take a photo or upload your payment receipt for review
+          </Text>
+        </View>
+        <Ionicons name="chevron-forward" size={24} color="#888" />
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderQRScanner = () => (
+    <View style={styles.scannerSection}>
+      <TouchableOpacity style={styles.backButton} onPress={() => setRedeemMethod('select')}>
+        <Ionicons name="arrow-back" size={20} color="#00A86B" />
+        <Text style={styles.backText}>Back to options</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.sectionTitle}>Scan Merchant's QR Code</Text>
+      
+      {/* Instructions */}
+      <View style={styles.instructionsCard}>
+        <View style={styles.instructionRow}>
+          <View style={styles.stepNumber}><Text style={styles.stepNumberText}>1</Text></View>
+          <Text style={styles.instructionText}>Make your digital payment at the merchant</Text>
+        </View>
+        <View style={styles.instructionRow}>
+          <View style={styles.stepNumber}><Text style={styles.stepNumberText}>2</Text></View>
+          <Text style={styles.instructionText}>Ask the merchant to show the offer QR code</Text>
+        </View>
+        <View style={styles.instructionRow}>
+          <View style={styles.stepNumber}><Text style={styles.stepNumberText}>3</Text></View>
+          <Text style={styles.instructionText}>Scan the QR code below to redeem your reward</Text>
+        </View>
+      </View>
+      
+      {!permission?.granted ? (
+        <View style={styles.permissionBox}>
+          <Ionicons name="camera" size={48} color="#888" />
+          <Text style={styles.permissionTitle}>Camera Access Required</Text>
+          <Text style={styles.permissionText}>
+            We need camera permission to scan QR codes for redemption
+          </Text>
+          <Button 
+            title="Enable Camera" 
+            onPress={requestPermission} 
+            style={styles.permissionBtn}
+          />
+        </View>
+      ) : (
+        <>
+          <View style={styles.cameraContainer}>
+            <CameraView
+              style={styles.camera}
+              facing="back"
+              onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+              barcodeScannerSettings={{
+                barcodeTypes: ['qr'],
+              }}
+            />
+            <View style={styles.cameraOverlay}>
+              <View style={styles.scanFrame}>
+                <View style={styles.cornerTL} />
+                <View style={styles.cornerTR} />
+                <View style={styles.cornerBL} />
+                <View style={styles.cornerBR} />
+              </View>
+            </View>
+            
+            {submitting && (
+              <View style={styles.processingOverlay}>
+                <ActivityIndicator size="large" color="#00A86B" />
+                <Text style={styles.processingText}>Processing redemption...</Text>
+              </View>
+            )}
+          </View>
+
+          {scanError && (
+            <View style={styles.errorBox}>
+              <Ionicons name="alert-circle" size={20} color="#dc3545" />
+              <Text style={styles.errorText}>{scanError}</Text>
+              <TouchableOpacity onPress={resetScanner}>
+                <Text style={styles.retryText}>Tap to retry</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <Text style={styles.scanHint}>
+            Point your camera at the merchant's QR code
+          </Text>
+        </>
+      )}
+    </View>
+  );
+
+  const renderReceiptUpload = () => (
+    <View style={styles.receiptSection}>
+      <TouchableOpacity style={styles.backButton} onPress={() => {
+        setRedeemMethod('select');
+        setReceiptImage(null);
+      }}>
+        <Ionicons name="arrow-back" size={20} color="#00A86B" />
+        <Text style={styles.backText}>Back to options</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.sectionTitle}>Upload Receipt</Text>
+      
+      {/* Instructions */}
+      <View style={styles.instructionsCard}>
+        <View style={styles.instructionRow}>
+          <View style={styles.stepNumber}><Text style={styles.stepNumberText}>1</Text></View>
+          <Text style={styles.instructionText}>Make your payment using debit card or digital wallet</Text>
+        </View>
+        <View style={styles.instructionRow}>
+          <View style={styles.stepNumber}><Text style={styles.stepNumberText}>2</Text></View>
+          <Text style={styles.instructionText}>Take a clear photo of your payment receipt</Text>
+        </View>
+        <View style={styles.instructionRow}>
+          <View style={styles.stepNumber}><Text style={styles.stepNumberText}>3</Text></View>
+          <Text style={styles.instructionText}>Submit for review - you'll be notified once approved</Text>
+        </View>
+      </View>
+
+      {/* Receipt Preview or Upload Buttons */}
+      {receiptImage ? (
+        <View style={styles.receiptPreview}>
+          <Image source={{ uri: receiptImage }} style={styles.receiptImage} resizeMode="contain" />
+          <TouchableOpacity 
+            style={styles.changeImageBtn}
+            onPress={() => setReceiptImage(null)}
+          >
+            <Ionicons name="close-circle" size={24} color="#dc3545" />
+            <Text style={styles.changeImageText}>Remove & choose another</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.uploadOptions}>
+          <TouchableOpacity style={styles.uploadBtn} onPress={takePhoto}>
+            <View style={styles.uploadIconWrap}>
+              <Ionicons name="camera" size={32} color="#00A86B" />
+            </View>
+            <Text style={styles.uploadBtnTitle}>Take Photo</Text>
+            <Text style={styles.uploadBtnDesc}>Use camera to capture receipt</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.uploadBtn} onPress={pickImage}>
+            <View style={styles.uploadIconWrap}>
+              <Ionicons name="images" size={32} color="#00A86B" />
+            </View>
+            <Text style={styles.uploadBtnTitle}>Choose from Gallery</Text>
+            <Text style={styles.uploadBtnDesc}>Select existing photo</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Submit Button */}
+      {receiptImage && (
+        <View style={styles.submitSection}>
+          <Button
+            title={submitting ? "Submitting..." : "Submit Receipt for Review"}
+            onPress={handleReceiptSubmit}
+            loading={submitting}
+            disabled={submitting}
+          />
+          <Text style={styles.reviewNote}>
+            <Ionicons name="information-circle" size={14} color="#888" /> 
+            {" "}Your receipt will be reviewed by admin. Points will be awarded upon approval.
+          </Text>
+        </View>
+      )}
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -141,83 +411,10 @@ export default function RedeemScreen() {
           </View>
         </View>
 
-        {/* Instructions */}
-        <View style={styles.instructionsCard}>
-          <View style={styles.instructionRow}>
-            <View style={styles.stepNumber}><Text style={styles.stepNumberText}>1</Text></View>
-            <Text style={styles.instructionText}>Make your digital payment at the merchant</Text>
-          </View>
-          <View style={styles.instructionRow}>
-            <View style={styles.stepNumber}><Text style={styles.stepNumberText}>2</Text></View>
-            <Text style={styles.instructionText}>Ask the merchant to show the offer QR code</Text>
-          </View>
-          <View style={styles.instructionRow}>
-            <View style={styles.stepNumber}><Text style={styles.stepNumberText}>3</Text></View>
-            <Text style={styles.instructionText}>Scan the QR code below to redeem your reward</Text>
-          </View>
-        </View>
-
-        {/* QR Scanner */}
-        <View style={styles.scannerSection}>
-          <Text style={styles.sectionTitle}>Scan Merchant's QR Code</Text>
-          
-          {!permission?.granted ? (
-            <View style={styles.permissionBox}>
-              <Ionicons name="camera" size={48} color="#888" />
-              <Text style={styles.permissionTitle}>Camera Access Required</Text>
-              <Text style={styles.permissionText}>
-                We need camera permission to scan QR codes for redemption
-              </Text>
-              <Button 
-                title="Enable Camera" 
-                onPress={requestPermission} 
-                style={styles.permissionBtn}
-              />
-            </View>
-          ) : (
-            <>
-              <View style={styles.cameraContainer}>
-                <CameraView
-                  style={styles.camera}
-                  facing="back"
-                  onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-                  barcodeScannerSettings={{
-                    barcodeTypes: ['qr'],
-                  }}
-                />
-                <View style={styles.cameraOverlay}>
-                  <View style={styles.scanFrame}>
-                    <View style={styles.cornerTL} />
-                    <View style={styles.cornerTR} />
-                    <View style={styles.cornerBL} />
-                    <View style={styles.cornerBR} />
-                  </View>
-                </View>
-                
-                {submitting && (
-                  <View style={styles.processingOverlay}>
-                    <ActivityIndicator size="large" color="#00A86B" />
-                    <Text style={styles.processingText}>Processing redemption...</Text>
-                  </View>
-                )}
-              </View>
-
-              {scanError && (
-                <View style={styles.errorBox}>
-                  <Ionicons name="alert-circle" size={20} color="#dc3545" />
-                  <Text style={styles.errorText}>{scanError}</Text>
-                  <TouchableOpacity onPress={resetScanner}>
-                    <Text style={styles.retryText}>Tap to retry</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-
-              <Text style={styles.scanHint}>
-                Point your camera at the merchant's QR code
-              </Text>
-            </>
-          )}
-        </View>
+        {/* Method Selection or Specific Method UI */}
+        {redeemMethod === 'select' && renderMethodSelection()}
+        {redeemMethod === 'qr' && renderQRScanner()}
+        {redeemMethod === 'receipt' && renderReceiptUpload()}
 
         {/* Daily Limit Notice */}
         <View style={styles.noticeCard}>
@@ -274,6 +471,60 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  // Method Selection
+  methodSection: {
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  methodCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+  },
+  methodIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#00A86B15',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
+  },
+  methodContent: {
+    flex: 1,
+  },
+  methodTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  methodDesc: {
+    color: '#888',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  // Back Button
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 16,
+  },
+  backText: {
+    color: '#00A86B',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  // Instructions
   instructionsCard: {
     backgroundColor: '#1a1a2e',
     borderRadius: 16,
@@ -305,13 +556,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
+  // QR Scanner
   scannerSection: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
     marginBottom: 16,
   },
   permissionBox: {
@@ -437,6 +683,75 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 16,
   },
+  // Receipt Upload
+  receiptSection: {
+    marginBottom: 16,
+  },
+  uploadOptions: {
+    gap: 12,
+  },
+  uploadBtn: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#2a2a3e',
+    borderStyle: 'dashed',
+  },
+  uploadIconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#00A86B15',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  uploadBtnTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  uploadBtnDesc: {
+    color: '#888',
+    fontSize: 13,
+  },
+  receiptPreview: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+  },
+  receiptImage: {
+    width: '100%',
+    height: 300,
+    borderRadius: 12,
+    backgroundColor: '#0f0f1a',
+  },
+  changeImageBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 16,
+    padding: 10,
+  },
+  changeImageText: {
+    color: '#dc3545',
+    fontSize: 14,
+  },
+  submitSection: {
+    marginTop: 20,
+  },
+  reviewNote: {
+    color: '#888',
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 12,
+    lineHeight: 18,
+  },
+  // Notice
   noticeCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -446,6 +761,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#ffc10730',
+    marginTop: 8,
   },
   noticeText: {
     flex: 1,
