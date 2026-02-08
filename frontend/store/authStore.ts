@@ -51,8 +51,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const response = await api.post('/auth/register/user', data);
       const { access_token, user } = response.data;
       
-      await SecureStore.setItemAsync('auth_token', access_token);
-      await SecureStore.setItemAsync('user_data', JSON.stringify(user));
+      await storage.setItem('auth_token', access_token);
+      await storage.setItem('user_data', JSON.stringify(user));
       
       set({ user, token: access_token, isAuthenticated: true });
     } catch (error: any) {
@@ -65,8 +65,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const response = await api.post('/auth/register/merchant', data);
       const { access_token, user } = response.data;
       
-      await SecureStore.setItemAsync('auth_token', access_token);
-      await SecureStore.setItemAsync('user_data', JSON.stringify(user));
+      await storage.setItem('auth_token', access_token);
+      await storage.setItem('user_data', JSON.stringify(user));
       
       set({ user, token: access_token, isAuthenticated: true });
     } catch (error: any) {
@@ -79,8 +79,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const response = await api.post('/auth/register/admin', data);
       const { access_token, user } = response.data;
       
-      await SecureStore.setItemAsync('auth_token', access_token);
-      await SecureStore.setItemAsync('user_data', JSON.stringify(user));
+      await storage.setItem('auth_token', access_token);
+      await storage.setItem('user_data', JSON.stringify(user));
       
       set({ user, token: access_token, isAuthenticated: true });
     } catch (error: any) {
@@ -89,15 +89,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: async () => {
-    await SecureStore.deleteItemAsync('auth_token');
-    await SecureStore.deleteItemAsync('user_data');
+    await storage.removeItem('auth_token');
+    await storage.removeItem('user_data');
     set({ user: null, token: null, isAuthenticated: false });
   },
 
   loadStoredAuth: async () => {
     try {
-      const token = await SecureStore.getItemAsync('auth_token');
-      const userData = await SecureStore.getItemAsync('user_data');
+      const token = await storage.getItem('auth_token');
+      const userData = await storage.getItem('user_data');
       
       if (token && userData) {
         const user = JSON.parse(userData);
@@ -107,12 +107,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         try {
           const response = await api.get('/auth/me');
           const freshUser = response.data;
-          await SecureStore.setItemAsync('user_data', JSON.stringify(freshUser));
+          await storage.setItem('user_data', JSON.stringify(freshUser));
           set({ user: freshUser });
         } catch (error) {
           // Token might be invalid
-          await SecureStore.deleteItemAsync('auth_token');
-          await SecureStore.deleteItemAsync('user_data');
+          await storage.removeItem('auth_token');
+          await storage.removeItem('user_data');
           set({ user: null, token: null, isAuthenticated: false });
         }
       } else {
@@ -127,7 +127,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const response = await api.get('/auth/me');
       const user = response.data;
-      await SecureStore.setItemAsync('user_data', JSON.stringify(user));
+      await storage.setItem('user_data', JSON.stringify(user));
       set({ user });
     } catch (error) {
       console.log('Error refreshing user:', error);
