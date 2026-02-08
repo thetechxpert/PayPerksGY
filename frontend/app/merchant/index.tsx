@@ -47,6 +47,23 @@ export default function MerchantDashboard() {
 
   const merchantUser = user as any;
   const isApproved = merchantUser?.approved;
+  const isRejected = !isApproved && merchantUser?.rejected_reason;
+  const isSuspended = merchantUser?.status === 'suspended';
+
+  const getStatusInfo = () => {
+    if (isSuspended) {
+      return { icon: 'ban', color: '#dc3545', text: 'Suspended' };
+    }
+    if (isApproved) {
+      return { icon: 'checkmark-circle', color: '#00A86B', text: 'Approved' };
+    }
+    if (isRejected) {
+      return { icon: 'close-circle', color: '#dc3545', text: 'Rejected' };
+    }
+    return { icon: 'time', color: '#ffc107', text: 'Pending Approval' };
+  };
+
+  const statusInfo = getStatusInfo();
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
