@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
+import QRCode from 'react-native-qrcode-svg';
 import api from '../../utils/api';
 import { useAuthStore } from '../../store/authStore';
 
@@ -13,6 +14,8 @@ export default function MerchantOffers() {
   const [offers, setOffers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState<any>(null);
+  const [qrModalVisible, setQrModalVisible] = useState(false);
 
   const merchantUser = user as any;
   const isApproved = merchantUser?.approved;
@@ -62,8 +65,22 @@ export default function MerchantOffers() {
     }
   };
 
+  const generateQRPayload = (offer: any) => {
+    return JSON.stringify({
+      type: 'payperks_redemption',
+      offer_id: offer.id,
+      merchant_id: offer.merchant_id,
+    });
+  };
+
+  const showQRCode = (offer: any) => {
+    setSelectedOffer(offer);
+    setQrModalVisible(true);
+  };
+
   const renderItem = ({ item }: any) => {
     const isExpired = new Date(item.end_date) < new Date();
+    const isActive = item.active && !isExpired;
     
     return (
       <View style={styles.card}>
@@ -103,6 +120,17 @@ export default function MerchantOffers() {
             <Ionicons name="pencil" size={18} color="#00A86B" />
             <Text style={styles.actionText}>Edit</Text>
           </TouchableOpacity>
+          
+          {isActive && (
+            <TouchableOpacity
+              style={styles.actionBtn}
+              onPress={() => showQRCode(item)}
+            >
+              <Ionicons name="qr-code" size={18} color="#17a2b8" />
+              <Text style={[styles.actionText, { color: '#17a2b8' }]}>Show QR</Text>
+            </TouchableOpacity>
+          )}
+          
           <TouchableOpacity
             style={styles.actionBtn}
             onPress={() => toggleOffer(item.id, item.active)}
@@ -148,6 +176,57 @@ export default function MerchantOffers() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#00A86B" />
         }
       />
+
+      {/* QR Code Modal */}
+      <Modal
+        visible={qrModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setQrModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.qrModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Offer QR Code</Text>
+              <TouchableOpacity onPress={() => setQrModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
+
+            {selectedOffer && (
+              <>
+                <View style={styles.qrContainer}>
+                  <View style={styles.qrBackground}>
+                    <QRCode
+                      value={generateQRPayload(selectedOffer)}
+                      size={200}
+                      backgroundColor="#fff"
+                      color="#000"
+                    />
+                  </View>
+                </View>
+
+                <Text style={styles.qrOfferTitle}>{selectedOffer.title}</Text>
+                <View style={styles.qrRewardBadge}>
+                  <Text style={styles.qrRewardText}>{getRewardDisplay(selectedOffer)}</Text>
+                </View>
+
+                <View style={styles.qrInstructions}>
+                  <Ionicons name="information-circle" size={20} color="#00A86B" />
+                  <Text style={styles.qrInstructionsText}>
+                    Display this QR code for customers to scan after they make a digital payment. The redemption will be instantly approved.
+                  </Text>
+                </View>
+
+                <View style={styles.qrTip}>
+                  <Text style={styles.qrTipTitle}>Customer Limit</Text>
+                  <Text style={styles.qrTipText}>Each customer can redeem this offer once per day</Text>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -269,5 +348,90 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 4,
     textAlign: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  qrModalContent: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 24,
+    padding: 24,
+    width: '90%',
+    maxWidth: 360,
+    alignItems: 'center',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 24,
+  },
+  modalTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  qrContainer: {
+    marginBottom: 20,
+  },
+  qrBackground: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 16,
+  },
+  qrOfferTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  qrRewardBadge: {
+    backgroundColor: '#00A86B',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginBottom: 20,
+  },
+  qrRewardText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  qrInstructions: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    backgroundColor: '#00A86B15',
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  qrInstructionsText: {
+    flex: 1,
+    color: '#aaa',
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  qrTip: {
+    backgroundColor: '#0f0f1a',
+    padding: 12,
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  qrTipTitle: {
+    color: '#888',
+    fontSize: 11,
+    marginBottom: 4,
+  },
+  qrTipText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '500',
   },
 });
