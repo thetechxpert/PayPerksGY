@@ -248,11 +248,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "User Registration & Authentication"
-    - "Merchant CRUD & Approval"
-    - "Offer Management"
-    - "Redemption System"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -260,3 +256,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Complete PayPerks GY mobile app MVP implementation done. Backend APIs tested and working via curl. All core features implemented: 3-role auth system, merchant approval workflow, offer management, QR/receipt redemptions, points system, and admin dashboard."
+  - agent: "testing"
+    message: "Comprehensive backend API testing completed successfully. All 27 core endpoints tested including auth, user management, merchant operations, offer system, redemptions, and admin functions. Key findings: QR redemptions auto-approved with instant points, receipt redemptions pending approval, duplicate prevention working, search/filter functionality operational, admin oversight complete. Minor note: user profile updates use query parameters (not JSON body) which is working correctly. All backend APIs are production-ready."
