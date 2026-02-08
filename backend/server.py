@@ -779,6 +779,35 @@ async def suspend_user(user_id: str, current_user: dict = Depends(require_role("
     await db.users.update_one({"id": user_id}, {"$set": {"status": new_status}})
     return {"message": f"User status set to {new_status}"}
 
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(user_id: str, current_user: dict = Depends(require_role("admin"))):
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Delete user and all related data
+    await db.users.delete_one({"id": user_id})
+    await db.redemptions.delete_many({"user_id": user_id})
+    await db.points_ledger.delete_many({"user_id": user_id})
+    
+    return {"message": "User account deleted"}
+
+@api_router.delete("/admin/merchants/{merchant_id}")
+async def delete_merchant(merchant_id: str, current_user: dict = Depends(require_role("admin"))):
+    merchant = await db.merchants.find_one({"id": merchant_id})
+    if not merchant:
+        raise HTTPException(status_code=404, detail="Merchant not found")
+    
+    # Delete merchant, their offers, and the associated user account
+    await db.merchants.delete_one({"id": merchant_id})
+    await db.offers.delete_many({"merchant_id": merchant_id})
+    
+    # Also delete the user account linked to this merchant
+    if merchant.get("user_id"):
+        await db.users.delete_one({"id": merchant["user_id"]})
+    
+    return {"message": "Merchant account deleted"}
+
 @api_router.get("/admin/offers", response_model=List[OfferResponse])
 async def get_all_offers(current_user: dict = Depends(require_role("admin"))):
     offers = await db.offers.find().sort("created_at", -1).to_list(100)
