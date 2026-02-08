@@ -251,28 +251,32 @@ class PayPerksAPITester:
             self.log_result("User Profile Update", False, "No user token")
             return False
         
-        update_data = {
+        update_params = {
             "name": "Sarah Johnson Updated",
             "phone": "+592-555-9999",
             "location": "Linden"
         }
         
-        success, response = self.make_request("PUT", "/users/profile", update_data, self.tokens["user"])
+        # User profile update uses query parameters, not JSON body
+        url = f"{BASE_URL}/users/profile"
+        headers = {"Authorization": f"Bearer {self.tokens['user']}"}
         
-        if not success:
-            self.log_result("User Profile Update", False, "Request failed", response)
-            return False
-        
-        if response.status_code == 200:
-            data = response.json()
-            if data.get("name") == update_data["name"]:
-                self.log_result("User Profile Update", True, "Profile updated successfully")
-                return True
+        try:
+            response = requests.put(url, headers=headers, params=update_params, timeout=TIMEOUT)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("name") == update_params["name"]:
+                    self.log_result("User Profile Update", True, "Profile updated successfully")
+                    return True
+                else:
+                    self.log_result("User Profile Update", False, "Profile not updated properly", str(data))
+                    return False
             else:
-                self.log_result("User Profile Update", False, "Profile not updated properly", str(data))
+                self.log_result("User Profile Update", False, f"HTTP {response.status_code}", response.text)
                 return False
-        else:
-            self.log_result("User Profile Update", False, f"HTTP {response.status_code}", response.text)
+        except requests.exceptions.RequestException as e:
+            self.log_result("User Profile Update", False, "Request failed", str(e))
             return False
     
     def test_merchant_profile_update(self):
