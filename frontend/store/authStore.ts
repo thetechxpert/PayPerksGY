@@ -37,8 +37,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const response = await api.post('/auth/login', { email, password });
       const { access_token, user } = response.data;
       
-      await SecureStore.setItemAsync('auth_token', access_token);
-      await SecureStore.setItemAsync('user_data', JSON.stringify(user));
+      await storage.setItem('auth_token', access_token);
+      await storage.setItem('user_data', JSON.stringify(user));
       
       set({ user, token: access_token, isAuthenticated: true });
     } catch (error: any) {
