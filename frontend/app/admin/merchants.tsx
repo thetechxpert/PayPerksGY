@@ -80,6 +80,30 @@ export default function AdminMerchants() {
     ]);
   };
 
+  const handleDelete = async (merchantId: string) => {
+    Alert.alert(
+      'Delete Merchant Account',
+      'Are you sure you want to permanently delete this merchant? This will also delete all their offers. This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await api.delete(`/admin/merchants/${merchantId}`);
+              loadMerchants();
+              setModalVisible(false);
+              Alert.alert('Success', 'Merchant account deleted');
+            } catch (error: any) {
+              Alert.alert('Error', error.response?.data?.detail || 'Failed to delete merchant');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const filteredMerchants = filter === 'all' ? merchants : 
     merchants.filter(m => filter === 'pending' ? !m.approved : m.approved);
 
