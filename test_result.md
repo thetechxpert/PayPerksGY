@@ -164,6 +164,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Full redemption flow tested: QR redemptions auto-approved with instant points, receipt redemptions pending approval, duplicate prevention (same offer/day), points ledger tracking, merchant/admin approval workflows."
+      - working: true
+        agent: "main"
+        comment: "Phase 5 Update: Points logic updated - reward_type='points' awards full reward_value, other types award +1 engagement point. All point changes tracked in PointsLedger. Admin point adjustment working."
 
   - task: "Admin Dashboard & Metrics"
     implemented: true
