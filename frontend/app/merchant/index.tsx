@@ -81,14 +81,14 @@ export default function MerchantDashboard() {
             </View>
             <View>
               <Text style={styles.businessName}>{merchantUser?.business_name || 'Merchant'}</Text>
-              <View style={[styles.statusBadge, { backgroundColor: isApproved ? '#00A86B20' : '#ffc10720' }]}>
+              <View style={[styles.statusBadge, { backgroundColor: statusInfo.color + '20' }]}>
                 <Ionicons
-                  name={isApproved ? 'checkmark-circle' : 'time'}
+                  name={statusInfo.icon as any}
                   size={14}
-                  color={isApproved ? '#00A86B' : '#ffc107'}
+                  color={statusInfo.color}
                 />
-                <Text style={[styles.statusText, { color: isApproved ? '#00A86B' : '#ffc107' }]}>
-                  {isApproved ? 'Approved' : 'Pending Approval'}
+                <Text style={[styles.statusText, { color: statusInfo.color }]}>
+                  {statusInfo.text}
                 </Text>
               </View>
             </View>
