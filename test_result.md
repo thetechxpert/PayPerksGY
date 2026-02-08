@@ -101,3 +101,147 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Build a native mobile app MVP called PayPerks GY for Guyana to incentivize debit card and digital payment usage through merchant rewards and perks. The platform must support three roles: User (Consumer), Merchant (Business Partner), and Admin."
+
+backend:
+  - task: "User Registration & Authentication"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Tested user, merchant, and admin registration/login APIs via curl. All working."
+
+  - task: "Merchant CRUD & Approval"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Admin can approve/reject merchants. Merchants can update profile. Tested via curl."
+
+  - task: "Offer Management"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Merchants can create/edit offers. Users can browse/search offers. Tested via curl."
+
+  - task: "Redemption System"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "QR redemptions auto-approved with points. Receipt redemptions pending. Points ledger working."
+
+  - task: "Admin Dashboard & Metrics"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Platform metrics endpoint working. User/merchant management endpoints working."
+
+frontend:
+  - task: "Landing & Auth Screens"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/index.tsx, login.tsx, register.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented landing page with role selection, login and registration screens."
+
+  - task: "User Tab Navigation & Offers"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/(tabs)/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented offers feed, wallet, history, and profile tabs for user role."
+
+  - task: "Offer Detail & Redemption Flow"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/offer-detail.tsx, redeem.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented offer details page with QR scanner and receipt upload options."
+
+  - task: "Merchant Dashboard & Offer Management"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/merchant/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented merchant dashboard, profile, offers CRUD, redemptions, and analytics."
+
+  - task: "Admin Panel"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/admin/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented admin dashboard with metrics, merchant/user management, and redemption review."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "User Registration & Authentication"
+    - "Merchant CRUD & Approval"
+    - "Offer Management"
+    - "Redemption System"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Complete PayPerks GY mobile app MVP implementation done. Backend APIs tested and working via curl. All core features implemented: 3-role auth system, merchant approval workflow, offer management, QR/receipt redemptions, points system, and admin dashboard."
