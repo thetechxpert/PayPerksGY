@@ -459,4 +459,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
+  deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    marginTop: 8,
+    backgroundColor: '#dc354520',
+    borderRadius: 12,
+  },
+  deleteBtnText: {
+    color: '#dc3545',
+    fontSize: 14,
+    fontWeight: '500',
+  },
 });
