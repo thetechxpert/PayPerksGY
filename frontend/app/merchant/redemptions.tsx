@@ -208,19 +208,8 @@ export default function MerchantRedemptions() {
                     title="Reject"
                     variant="danger"
                     onPress={() => {
-                      Alert.prompt(
-                        'Rejection Reason',
-                        'Please provide a reason for rejection:',
-                        [
-                          { text: 'Cancel', style: 'cancel' },
-                          {
-                            text: 'Reject',
-                            style: 'destructive',
-                            onPress: (reason) => handleApprove(selectedRedemption.id, 'rejected', reason),
-                          },
-                        ],
-                        'plain-text'
-                      );
+                      setModalVisible(false);
+                      setRejectModalVisible(true);
                     }}
                     disabled={processing}
                     style={styles.rejectBtn}
@@ -230,6 +219,62 @@ export default function MerchantRedemptions() {
             )}
           </View>
         </View>
+      </Modal>
+
+      {/* Rejection Reason Modal */}
+      <Modal
+        visible={rejectModalVisible}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setRejectModalVisible(false)}
+      >
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.rejectModalOverlay}
+        >
+          <View style={styles.rejectModalContent}>
+            <Text style={styles.rejectModalTitle}>Rejection Reason</Text>
+            <Text style={styles.rejectModalSubtitle}>Please provide a reason for rejecting this redemption:</Text>
+            
+            <TextInput
+              style={styles.rejectInput}
+              value={rejectionReason}
+              onChangeText={setRejectionReason}
+              placeholder="Enter reason..."
+              placeholderTextColor="#666"
+              multiline
+              numberOfLines={3}
+            />
+            
+            <View style={styles.rejectModalActions}>
+              <TouchableOpacity 
+                style={styles.rejectCancelBtn}
+                onPress={() => {
+                  setRejectModalVisible(false);
+                  setRejectionReason('');
+                  setModalVisible(true);
+                }}
+              >
+                <Text style={styles.rejectCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.rejectConfirmBtn, !rejectionReason.trim() && styles.rejectConfirmBtnDisabled]}
+                onPress={() => {
+                  if (rejectionReason.trim() && selectedRedemption) {
+                    handleApprove(selectedRedemption.id, 'rejected', rejectionReason.trim());
+                    setRejectModalVisible(false);
+                    setRejectionReason('');
+                  }
+                }}
+                disabled={!rejectionReason.trim() || processing}
+              >
+                <Text style={styles.rejectConfirmText}>
+                  {processing ? 'Processing...' : 'Reject'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
