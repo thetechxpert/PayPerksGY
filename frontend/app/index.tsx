@@ -124,17 +124,17 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 10,
-    paddingBottom: 40,
+    paddingTop: 0,
+    paddingBottom: 20,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 4,
   },
   logo: {
     width: 540,
-    height: 300,
-    marginBottom: 0,
+    height: 280,
+    marginBottom: -10,
   },
   subtitle: {
     fontSize: 16,
