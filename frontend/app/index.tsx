@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
@@ -29,7 +30,8 @@ export default function Landing() {
   }, [isAuthenticated, user]);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      {/* Header with Logo */}
       <View style={styles.header}>
         <Image 
           source={{ uri: LOGO_URL }} 
@@ -39,10 +41,11 @@ export default function Landing() {
         <Text style={styles.subtitle}>Guyana's Digital Payment Rewards</Text>
       </View>
 
+      {/* Features */}
       <View style={styles.features}>
         <View style={styles.featureItem}>
           <View style={styles.featureIcon}>
-            <Ionicons name="card" size={24} color="#00A86B" />
+            <Ionicons name="card" size={22} color="#00A86B" />
           </View>
           <View style={styles.featureText}>
             <Text style={styles.featureTitle}>Pay with Card</Text>
@@ -51,7 +54,7 @@ export default function Landing() {
         </View>
         <View style={styles.featureItem}>
           <View style={styles.featureIcon}>
-            <Ionicons name="qr-code" size={24} color="#00A86B" />
+            <Ionicons name="qr-code" size={22} color="#00A86B" />
           </View>
           <View style={styles.featureText}>
             <Text style={styles.featureTitle}>Scan & Redeem</Text>
@@ -60,7 +63,7 @@ export default function Landing() {
         </View>
         <View style={styles.featureItem}>
           <View style={styles.featureIcon}>
-            <Ionicons name="star" size={24} color="#00A86B" />
+            <Ionicons name="star" size={22} color="#00A86B" />
           </View>
           <View style={styles.featureText}>
             <Text style={styles.featureTitle}>Earn Rewards</Text>
@@ -69,6 +72,7 @@ export default function Landing() {
         </View>
       </View>
 
+      {/* Actions */}
       <View style={styles.actions}>
         <Button
           title="Get Started"
@@ -88,32 +92,33 @@ export default function Landing() {
         style={styles.partnerCta}
         onPress={() => router.push('/partner')}
       >
-        <Ionicons name="storefront" size={20} color="#00A86B" />
+        <Ionicons name="storefront" size={18} color="#00A86B" />
         <Text style={styles.partnerText}>Are you a merchant? Partner with us</Text>
-        <Ionicons name="arrow-forward" size={18} color="#00A86B" />
+        <Ionicons name="arrow-forward" size={16} color="#00A86B" />
       </TouchableOpacity>
 
-      {/* Footer Links */}
-      <View style={styles.footerLinks}>
-        <TouchableOpacity onPress={() => router.push('/help')}>
-          <Text style={styles.footerLink}>Help</Text>
-        </TouchableOpacity>
-        <Text style={styles.footerDivider}>•</Text>
-        <TouchableOpacity onPress={() => router.push('/contact')}>
-          <Text style={styles.footerLink}>Contact</Text>
-        </TouchableOpacity>
-        <Text style={styles.footerDivider}>•</Text>
-        <TouchableOpacity onPress={() => router.push('/terms')}>
-          <Text style={styles.footerLink}>Terms</Text>
-        </TouchableOpacity>
-        <Text style={styles.footerDivider}>•</Text>
-        <TouchableOpacity onPress={() => router.push('/privacy')}>
-          <Text style={styles.footerLink}>Privacy</Text>
-        </TouchableOpacity>
+      {/* Footer */}
+      <View style={styles.footerSection}>
+        <View style={styles.footerLinks}>
+          <TouchableOpacity onPress={() => router.push('/help')}>
+            <Text style={styles.footerLink}>Help</Text>
+          </TouchableOpacity>
+          <Text style={styles.footerDivider}>•</Text>
+          <TouchableOpacity onPress={() => router.push('/contact')}>
+            <Text style={styles.footerLink}>Contact</Text>
+          </TouchableOpacity>
+          <Text style={styles.footerDivider}>•</Text>
+          <TouchableOpacity onPress={() => router.push('/terms')}>
+            <Text style={styles.footerLink}>Terms</Text>
+          </TouchableOpacity>
+          <Text style={styles.footerDivider}>•</Text>
+          <TouchableOpacity onPress={() => router.push('/privacy')}>
+            <Text style={styles.footerLink}>Privacy</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.footer}>Powered by The TechXpert</Text>
       </View>
-
-      <Text style={styles.footer}>Powered by The TechXpert</Text>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -121,63 +126,57 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0f0f1a',
-  },
-  scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 0,
-    paddingBottom: 20,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 0,
   },
   logo: {
-    width: 540,
-    height: 280,
-    marginBottom: -30,
+    width: 500,
+    height: 220,
+    marginBottom: -25,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#888',
     textAlign: 'center',
-    marginBottom: 12,
   },
   features: {
-    gap: 10,
-    marginBottom: 12,
+    flex: 1,
+    justifyContent: 'center',
+    gap: 8,
   },
   featureItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1a1a2e',
-    padding: 14,
-    borderRadius: 16,
+    padding: 12,
+    borderRadius: 14,
   },
   featureIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: '#00A86B15',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: 14,
   },
   featureText: {
     flex: 1,
   },
   featureTitle: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   featureDesc: {
     color: '#888',
-    fontSize: 13,
+    fontSize: 12,
   },
   actions: {
     gap: 10,
-    marginTop: 14,
   },
   primaryBtn: {
     width: '100%',
@@ -191,17 +190,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     backgroundColor: '#00A86B15',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    marginTop: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    marginTop: 12,
     borderWidth: 1,
     borderColor: '#00A86B30',
   },
   partnerText: {
     color: '#00A86B',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
+  },
+  footerSection: {
+    paddingTop: 12,
+    paddingBottom: 4,
   },
   footerLinks: {
     flexDirection: 'row',
@@ -209,20 +212,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexWrap: 'wrap',
     gap: 8,
-    marginTop: 16,
   },
   footerLink: {
     color: '#888',
-    fontSize: 13,
+    fontSize: 12,
   },
   footerDivider: {
     color: '#555',
-    fontSize: 13,
+    fontSize: 12,
   },
   footer: {
     color: '#555',
-    fontSize: 12,
+    fontSize: 11,
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 6,
   },
 });
