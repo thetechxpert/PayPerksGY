@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   actions: {
-    gap: 12,
-    marginTop: 20,
+    gap: 10,
+    marginTop: 14,
   },
   primaryBtn: {
     width: '100%',
@@ -189,10 +189,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     backgroundColor: '#00A86B15',
-    paddingVertical: 14,
+    paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 12,
-    marginTop: 20,
+    marginTop: 14,
     borderWidth: 1,
     borderColor: '#00A86B30',
   },
