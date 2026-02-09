@@ -129,20 +129,22 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 0,
   },
   logo: {
     width: 540,
     height: 280,
-    marginBottom: -10,
+    marginBottom: -30,
   },
   subtitle: {
     fontSize: 16,
     color: '#888',
     textAlign: 'center',
+    marginBottom: 12,
   },
   features: {
     gap: 10,
+    marginBottom: 12,
   },
   featureItem: {
     flexDirection: 'row',
