@@ -142,13 +142,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   features: {
-    gap: 16,
+    gap: 10,
   },
   featureItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1a1a2e',
-    padding: 16,
+    padding: 14,
     borderRadius: 16,
   },
   featureIcon: {
