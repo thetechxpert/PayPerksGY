@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexWrap: 'wrap',
     gap: 8,
-    marginTop: 24,
+    marginTop: 16,
   },
   footerLink: {
     color: '#888',
@@ -221,6 +221,6 @@ const styles = StyleSheet.create({
     color: '#555',
     fontSize: 12,
     textAlign: 'center',
-    marginTop: 16,
+    marginTop: 10,
   },
 });
