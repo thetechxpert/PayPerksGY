@@ -54,7 +54,7 @@ export default function HelpScreen() {
         <View style={styles.quickActions}>
           <TouchableOpacity 
             style={styles.quickAction}
-            onPress={() => Linking.openURL('https://wa.me/592XXXXXXX?text=Hello%20PayPerks%20Support')}
+            onPress={() => Linking.openURL('https://wa.me/5926727825?text=Hello%20PayPerks%20Support')}
           >
             <View style={[styles.quickIcon, { backgroundColor: '#25D36620' }]}>
               <Ionicons name="logo-whatsapp" size={24} color="#25D366" />
