@@ -16,9 +16,9 @@ TIMEOUT = 30
 
 # Test accounts (as mentioned in review request)
 TEST_ACCOUNTS = {
-    "user": {"email": "user@test.com", "password": "test123"},
-    "merchant": {"email": "merchant@test.com", "password": "test123"},
-    "admin": {"email": "admin@test.com", "password": "admin123"}
+    "user": {"email": "user@test.com", "password": "password"},
+    "merchant": {"email": "merchant@test.com", "password": "password"},
+    "admin": {"email": "admin@test.com", "password": "password"}
 }
 
 class PayPerksAPITester:
