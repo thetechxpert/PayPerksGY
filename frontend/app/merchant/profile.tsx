@@ -263,6 +263,47 @@ export default function MerchantProfile() {
               style={styles.saveBtn}
             />
           </View>
+
+          {/* Support Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Support</Text>
+            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/help')}>
+              <Ionicons name="help-circle-outline" size={22} color="#00A86B" />
+              <Text style={styles.menuItemText}>Help & FAQ</Text>
+              <Ionicons name="chevron-forward" size={20} color="#888" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/contact')}>
+              <Ionicons name="chatbubbles-outline" size={22} color="#00A86B" />
+              <Text style={styles.menuItemText}>Contact Us</Text>
+              <Ionicons name="chevron-forward" size={20} color="#888" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Legal Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Legal</Text>
+            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/terms')}>
+              <Ionicons name="document-text-outline" size={22} color="#888" />
+              <Text style={styles.menuItemText}>Terms of Service</Text>
+              <Ionicons name="chevron-forward" size={20} color="#888" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/privacy')}>
+              <Ionicons name="shield-outline" size={22} color="#888" />
+              <Text style={styles.menuItemText}>Privacy Policy</Text>
+              <Ionicons name="chevron-forward" size={20} color="#888" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Logout Section */}
+          <View style={styles.section}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+              <Ionicons name="log-out-outline" size={22} color="#dc3545" />
+              <Text style={styles.menuItemTextDanger}>Logout</Text>
+              <Ionicons name="chevron-forward" size={20} color="#dc3545" />
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.version}>PayPerks GY Merchant v1.0.0</Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
