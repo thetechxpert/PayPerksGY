@@ -55,7 +55,8 @@
         {
           "photosPermission": "Select receipt photos for verification"
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true
