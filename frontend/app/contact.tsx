@@ -27,10 +27,10 @@ export default function ContactScreen() {
     {
       icon: 'call',
       title: 'Phone',
-      subtitle: '+592-XXX-XXXX',
+      subtitle: '+592 672 7825',
       description: 'Mon-Fri 9am-5pm (Guyana Time)',
       color: '#3b82f6',
-      action: () => Linking.openURL('tel:+592XXXXXXX'),
+      action: () => Linking.openURL('tel:+5926727825'),
     },
   ];
 
