@@ -83,7 +83,7 @@ export default function PrivacyScreen() {
           <Text style={styles.sectionText}>
             For privacy-related inquiries, please contact us at:{"\n"}
             Email: privacy@payperksgy.com{"\n"}
-            WhatsApp: +592-XXX-XXXX
+            WhatsApp: +592 672 7825
           </Text>
         </View>
       </ScrollView>
