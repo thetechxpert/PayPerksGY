@@ -200,7 +200,7 @@ export default function PartnerScreen() {
             label="Phone Number *"
             value={form.phone}
             onChangeText={(v) => setForm({ ...form, phone: v })}
-            placeholder="+592-XXX-XXXX"
+            placeholder="+592 672 7825"
             keyboardType="phone-pad"
           />
 
