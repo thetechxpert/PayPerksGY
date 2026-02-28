@@ -11,10 +11,10 @@ export default function ContactScreen() {
     {
       icon: 'logo-whatsapp',
       title: 'WhatsApp',
-      subtitle: '+592-XXX-XXXX',
+      subtitle: '+592 672 7825',
       description: 'Fastest response time. Available Mon-Fri 9am-5pm',
       color: '#25D366',
-      action: () => Linking.openURL('https://wa.me/592XXXXXXX?text=Hello%20PayPerks%20Support'),
+      action: () => Linking.openURL('https://wa.me/5926727825?text=Hello%20PayPerks%20Support'),
     },
     {
       icon: 'mail',
