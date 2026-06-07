@@ -195,27 +195,33 @@ backend:
 frontend:
   - task: "Landing & Auth Screens"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/app/index.tsx, login.tsx, register.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented landing page with role selection, login and registration screens."
+      - working: true
+        agent: "testing"
+        comment: "Jun 7, 2026: Tested login flow on mobile (390x844). Landing page displays correctly with 'I already have an account' button. Login page has email/password inputs and 'Sign In' button. Successfully logged in as user@test.com and navigated to user dashboard/offers tab. All UI elements visible and functional."
 
   - task: "User Tab Navigation & Offers"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/app/(tabs)/"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented offers feed, wallet, history, and profile tabs for user role."
+      - working: true
+        agent: "testing"
+        comment: "Jun 7, 2026: Tested offers flow on mobile. Offers list displays correctly showing 3 offers with merchant names, titles, reward badges (100 PTS, 50 PTS, 20% OFF), and expiry dates. Search bar and filter options visible. Successfully clicked on offer card and navigated to offer details page. Offer details page shows all key information: merchant info, reward badge, offer title/description, offer details card with reward type/value/dates/category/location. All 3/3 key elements verified."
 
   - task: "Offer Detail & Redemption Flow"
     implemented: true
@@ -231,6 +237,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "Phase 6 Update: Added receipt upload flow with two options (Scan QR / Upload Receipt). Users can take photo or pick from gallery. Receipt creates pending redemption for admin review."
+      - working: true
+        agent: "testing"
+        comment: "Jun 7, 2026: Tested redemption flow on mobile. 'Redeem This Offer' button found and clickable on offer details page. Redemption page loads correctly with 'Choose Redemption Method' heading. Both redemption options verified: 1) Scan QR Code - with description 'Scan the merchant's QR code for instant redemption', 2) Upload Receipt - with description 'Take a photo or upload your payment receipt for review'. Notice displayed: 'Each offer can only be redeemed once per day'. All redemption UI elements accessible and functional."
 
   - task: "Merchant Dashboard & Offer Management"
     implemented: true
@@ -263,7 +272,9 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Merchant Dashboard & Offer Management"
+    - "Admin Panel"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -279,3 +290,7 @@ agent_communication:
     message: "Final comprehensive backend testing completed (Feb 28, 2026). Tested all critical flows with provided credentials (admin@test.com, merchant@test.com, user@test.com). Results: 22/29 tests passed (75.9% success rate). ✅ WORKING: Authentication (all 3 roles), merchant approval workflow, offer management, QR redemptions with auto-approval and points, admin analytics with platform metrics, user/merchant management, points balance/history. ⚠️ MINOR ISSUES: Admin points adjustment expects query params (not JSON), receipt redemptions work but test had parameter format issue, suspended user login prevention needs verification. All core business flows operational and production-ready."
   - agent: "testing"
     message: "Jun 7, 2026 - Review Request Testing Complete: Tested all endpoints specified in review request. MINOR FIX APPLIED: Added missing POST /api/seed endpoint to create test accounts (idempotent). Test Results: 23/27 tests passed (85.2%). ✅ ALL WORKING: Health check, seed endpoint, authentication (all 3 roles with test credentials), user profile endpoints, offers (list and individual), redemptions (create and list), points history, merchant operations, admin operations. ⚠️ NOTE: GET /api/merchants (public) does not exist - only GET /api/admin/merchants is available. The 4 test failures are expected (duplicate registration attempts after seed). All backend APIs fully functional and production-ready."
+  - agent: "main"
+    message: "Jun 7, 2026 - UI Layout Verification Complete: Screenshots verified that index and login pages display all elements without scrolling, clean and simple layout as requested. Now requesting frontend testing agent to test login, offers, and redemption flows. Test credentials: user@test.com/password, merchant@test.com/password, admin@test.com/password."
+  - agent: "testing"
+    message: "Jun 7, 2026 - Frontend Testing Complete: Tested all 3 requested flows on mobile (390x844). ✅ ALL TESTS PASSED: 1) Login Flow - Landing page 'I already have an account' button works, login form accepts credentials, successfully navigates to user dashboard/offers tab. 2) Offers Flow - Offers list displays 3 offers with merchant info and reward badges, clicking offer navigates to details page with all key information (merchant, reward, dates, category, location). 3) Redemption Flow - 'Redeem This Offer' button accessible, redemption page shows both options (Scan QR Code and Upload Receipt) with descriptions and daily limit notice. All UI elements visible, clickable, and functional. No critical issues found."

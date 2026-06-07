@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,10 +11,11 @@ const LOGO_URL = 'https://customer-assets.emergentagent.com/job_111ef9f1-fd64-46
 export default function Landing() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
+  const { height } = useWindowDimensions();
+  const isSmallScreen = height < 700;
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      // Redirect based on role
       switch (user.role) {
         case 'user':
           router.replace('/(tabs)');
@@ -35,39 +36,32 @@ export default function Landing() {
       <View style={styles.header}>
         <Image 
           source={{ uri: LOGO_URL }} 
-          style={styles.logo}
+          style={[styles.logo, isSmallScreen && styles.logoSmall]}
           resizeMode="contain"
         />
         <Text style={styles.subtitle}>Guyana's Digital Payment Rewards</Text>
       </View>
 
-      {/* Features */}
+      {/* Features - Compact Row Layout */}
       <View style={styles.features}>
-        <View style={styles.featureItem}>
-          <View style={styles.featureIcon}>
-            <Ionicons name="card" size={22} color="#00A86B" />
+        <View style={styles.featureRow}>
+          <View style={styles.featureItem}>
+            <View style={styles.featureIcon}>
+              <Ionicons name="card" size={18} color="#00A86B" />
+            </View>
+            <Text style={styles.featureTitle}>Pay</Text>
           </View>
-          <View style={styles.featureText}>
-            <Text style={styles.featureTitle}>Pay with Card</Text>
-            <Text style={styles.featureDesc}>Use your debit card at partner merchants</Text>
+          <View style={styles.featureItem}>
+            <View style={styles.featureIcon}>
+              <Ionicons name="qr-code" size={18} color="#00A86B" />
+            </View>
+            <Text style={styles.featureTitle}>Scan</Text>
           </View>
-        </View>
-        <View style={styles.featureItem}>
-          <View style={styles.featureIcon}>
-            <Ionicons name="qr-code" size={22} color="#00A86B" />
-          </View>
-          <View style={styles.featureText}>
-            <Text style={styles.featureTitle}>Scan & Redeem</Text>
-            <Text style={styles.featureDesc}>Scan QR codes or upload receipts</Text>
-          </View>
-        </View>
-        <View style={styles.featureItem}>
-          <View style={styles.featureIcon}>
-            <Ionicons name="star" size={22} color="#00A86B" />
-          </View>
-          <View style={styles.featureText}>
-            <Text style={styles.featureTitle}>Earn Rewards</Text>
-            <Text style={styles.featureDesc}>Get discounts, freebies, and points</Text>
+          <View style={styles.featureItem}>
+            <View style={styles.featureIcon}>
+              <Ionicons name="star" size={18} color="#00A86B" />
+            </View>
+            <Text style={styles.featureTitle}>Earn</Text>
           </View>
         </View>
       </View>
@@ -80,22 +74,19 @@ export default function Landing() {
           style={styles.primaryBtn}
         />
         <Button
-          title="I already have an account"
+          title="Sign In"
           variant="outline"
           onPress={() => router.push('/login')}
           style={styles.secondaryBtn}
         />
+        <TouchableOpacity 
+          style={styles.partnerCta}
+          onPress={() => router.push('/partner')}
+        >
+          <Ionicons name="storefront" size={16} color="#00A86B" />
+          <Text style={styles.partnerText}>Merchant? Partner with us</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Partner CTA */}
-      <TouchableOpacity 
-        style={styles.partnerCta}
-        onPress={() => router.push('/partner')}
-      >
-        <Ionicons name="storefront" size={18} color="#00A86B" />
-        <Text style={styles.partnerText}>Are you a merchant? Partner with us</Text>
-        <Ionicons name="arrow-forward" size={16} color="#00A86B" />
-      </TouchableOpacity>
 
       {/* Footer */}
       <View style={styles.footerSection}>
@@ -127,53 +118,52 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0f0f1a',
     paddingHorizontal: 24,
+    justifyContent: 'space-between',
   },
   header: {
     alignItems: 'center',
+    paddingTop: 8,
   },
   logo: {
-    width: 500,
-    height: 220,
-    marginBottom: -25,
+    width: 280,
+    height: 120,
+  },
+  logoSmall: {
+    width: 220,
+    height: 95,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 14,
     color: '#888',
     textAlign: 'center',
+    marginTop: -5,
   },
   features: {
-    flex: 1,
+    paddingVertical: 16,
+  },
+  featureRow: {
+    flexDirection: 'row',
     justifyContent: 'center',
-    gap: 8,
+    gap: 24,
   },
   featureItem: {
-    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
-    padding: 12,
-    borderRadius: 14,
+    gap: 8,
   },
   featureIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: '#00A86B15',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
-  },
-  featureText: {
-    flex: 1,
+    borderWidth: 1,
+    borderColor: '#00A86B30',
   },
   featureTitle: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '600',
-    marginBottom: 2,
-  },
-  featureDesc: {
-    color: '#888',
-    fontSize: 12,
   },
   actions: {
     gap: 10,
@@ -188,14 +178,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#00A86B15',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    marginTop: 12,
-    borderWidth: 1,
-    borderColor: '#00A86B30',
+    gap: 6,
+    paddingVertical: 12,
   },
   partnerText: {
     color: '#00A86B',
@@ -203,8 +187,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   footerSection: {
-    paddingTop: 12,
-    paddingBottom: 4,
+    paddingVertical: 8,
   },
   footerLinks: {
     flexDirection: 'row',
@@ -225,6 +208,6 @@ const styles = StyleSheet.create({
     color: '#555',
     fontSize: 11,
     textAlign: 'center',
-    marginTop: 6,
+    marginTop: 4,
   },
 });
