@@ -18,7 +18,7 @@ import sys
 import time
 
 # Configuration
-BASE_URL = "https://loyaltyboost-5.preview.emergentagent.com/api"
+BASE_URL = "https://payperks-portal-hub.preview.emergentagent.com/api"
 TIMEOUT = 30
 
 # Test credentials from review request
