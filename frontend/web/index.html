@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#00A86B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PayPerks GY">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="PayPerks GY">
+  <meta name="msapplication-TileColor" content="#00A86B">
+  <meta name="msapplication-tap-highlight" content="no">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="PayPerks GY - Guyana's Digital Payment Rewards Platform. Earn rewards when you pay with your debit card.">
+  <meta name="keywords" content="PayPerks, Guyana, rewards, payments, debit card, cashback, loyalty">
+  <meta name="author" content="PayPerks GY">
+  
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PayPerks GY - Earn Rewards with Every Purchase">
+  <meta property="og:description" content="Guyana's Digital Payment Rewards Platform. Earn rewards when you pay with your debit card.">
+  <meta property="og:image" content="/assets/images/app-image.png">
+  <meta property="og:url" content="https://payperksgy.com">
+  
+  <!-- Apple Touch Icon -->
+  <link rel="apple-touch-icon" href="/assets/images/icon.png">
+  <link rel="apple-touch-startup-image" href="/assets/images/splash-image.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+  <link rel="shortcut icon" href="/assets/images/favicon.png">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <title>PayPerks GY</title>
+  
+  <style>
+    /* Critical CSS for fast initial paint */
+    html, body, #root {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #0f0f1a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+    
+    /* PWA install prompt styles */
+    .pwa-install-prompt {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #00A86B 0%, #008f5a 100%);
+      color: white;
+      padding: 16px 20px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 9999;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .pwa-install-prompt.show {
+      display: flex;
+    }
+    
+    .pwa-install-prompt .text {
+      flex: 1;
+    }
+    
+    .pwa-install-prompt .title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    
+    .pwa-install-prompt .subtitle {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    
+    .pwa-install-prompt button {
+      background: white;
+      color: #00A86B;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: 12px;
+    }
+    
+    .pwa-install-prompt .close {
+      background: transparent;
+      color: white;
+      font-size: 20px;
+      padding: 8px;
+    }
+    
+    /* Loading screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #0f0f1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease-out;
+    }
+    
+    #loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loader-logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    
+    .loader-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(0, 168, 107, 0.2);
+      border-top-color: #00A86B;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <img class="loader-logo" src="/assets/images/icon.png" alt="PayPerks GY" onerror="this.style.display='none'">
+    <div class="loader-spinner"></div>
+  </div>
+  
+  <!-- React Root -->
+  <div id="root"></div>
+  
+  <!-- PWA Install Prompt -->
+  <div id="pwa-install-prompt" class="pwa-install-prompt">
+    <div class="text">
+      <div class="title">Add PayPerks GY to Home</div>
+      <div class="subtitle">Install for quick access and offline use</div>
+    </div>
+    <button id="pwa-install-btn">Install</button>
+    <button class="close" id="pwa-close-btn">×</button>
+  </div>
+
+  <script>
+    // Hide loading screen when app loads
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        var loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+          loadingScreen.classList.add('hidden');
+          setTimeout(function() {
+            loadingScreen.remove();
+          }, 300);
+        }
+      }, 500);
+    });
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(registration) {
+            console.log('[PWA] Service Worker registered:', registration.scope);
+          })
+          .catch(function(error) {
+            console.log('[PWA] Service Worker registration failed:', error);
+          });
+      });
+    }
+
+    // PWA Install Prompt
+    let deferredPrompt;
+    const installPrompt = document.getElementById('pwa-install-prompt');
+    const installBtn = document.getElementById('pwa-install-btn');
+    const closeBtn = document.getElementById('pwa-close-btn');
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      // Show install prompt after a delay
+      setTimeout(function() {
+        // Don't show if already dismissed
+        if (localStorage.getItem('pwa-prompt-dismissed') !== 'true') {
+          installPrompt.classList.add('show');
+        }
+      }, 3000);
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener('click', async function() {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log('[PWA] Install outcome:', outcome);
+          deferredPrompt = null;
+          installPrompt.classList.remove('show');
+        }
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        installPrompt.classList.remove('show');
+        localStorage.setItem('pwa-prompt-dismissed', 'true');
+      });
+    }
+
+    // Hide prompt when app is installed
+    window.addEventListener('appinstalled', function() {
+      console.log('[PWA] App installed');
+      installPrompt.classList.remove('show');
+    });
+  </script>
+</body>
+</html>

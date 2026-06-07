@@ -962,6 +962,82 @@ async def get_locations():
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.utcnow()}
 
+# Seed endpoint for test data
+@api_router.post("/seed")
+async def seed_database():
+    """Seed the database with test accounts (idempotent)"""
+    try:
+        # Check if test accounts already exist
+        existing_user = await db.users.find_one({"email": "user@test.com"})
+        existing_merchant = await db.merchants.find_one({"email": "merchant@test.com"})
+        existing_admin = await db.admins.find_one({"email": "admin@test.com"})
+        
+        created = []
+        
+        # Create test user if not exists
+        if not existing_user:
+            user_id = str(uuid.uuid4())
+            user_doc = {
+                "id": user_id,
+                "role": "user",
+                "name": "Test User",
+                "email": "user@test.com",
+                "phone": "+592-555-0001",
+                "location": "Georgetown",
+                "preferred_card_type": "Visa Debit",
+                "password_hash": hash_password("password"),
+                "points_balance": 0,
+                "created_at": datetime.utcnow(),
+                "status": "active"
+            }
+            await db.users.insert_one(user_doc)
+            created.append("user@test.com")
+        
+        # Create test merchant if not exists
+        if not existing_merchant:
+            merchant_id = str(uuid.uuid4())
+            merchant_doc = {
+                "id": merchant_id,
+                "role": "merchant",
+                "business_name": "Test Merchant",
+                "category": "Restaurants & Dining",
+                "location": "Georgetown",
+                "logo_base64": None,
+                "contact_info": "+592-555-0002",
+                "email": "merchant@test.com",
+                "password_hash": hash_password("password"),
+                "approved": True,  # Pre-approve for testing
+                "rejected_reason": None,
+                "created_at": datetime.utcnow(),
+                "status": "active"
+            }
+            await db.merchants.insert_one(merchant_doc)
+            created.append("merchant@test.com")
+        
+        # Create test admin if not exists
+        if not existing_admin:
+            admin_id = str(uuid.uuid4())
+            admin_doc = {
+                "id": admin_id,
+                "role": "admin",
+                "name": "Test Admin",
+                "email": "admin@test.com",
+                "password_hash": hash_password("password"),
+                "created_at": datetime.utcnow(),
+                "status": "active"
+            }
+            await db.admins.insert_one(admin_doc)
+            created.append("admin@test.com")
+        
+        if created:
+            return {"message": "Database seeded successfully", "created": created}
+        else:
+            return {"message": "Test accounts already exist", "created": []}
+    
+    except Exception as e:
+        logger.error(f"Seed error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Seed failed: {str(e)}")
+
 # Include the router
 app.include_router(api_router)
 

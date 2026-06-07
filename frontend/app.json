@@ -31,7 +31,17 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "PayPerks GY",
+      "shortName": "PayPerks",
+      "description": "Guyana's Digital Payment Rewards Platform - Earn rewards when you pay with your debit card",
+      "lang": "en",
+      "themeColor": "#00A86B",
+      "backgroundColor": "#0f0f1a",
+      "display": "standalone",
+      "orientation": "portrait",
+      "startUrl": "/",
+      "scope": "/"
     },
     "plugins": [
       "expo-router",

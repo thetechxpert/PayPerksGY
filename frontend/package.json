@@ -8,7 +8,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "export:web": "expo export --platform web && node ./scripts/pwa-setup.js",
+    "pwa:setup": "node ./scripts/pwa-setup.js"
   },
   "dependencies": {
     "@babel/runtime": "^7.20.6",
